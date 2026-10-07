@@ -1,0 +1,67 @@
+name: TaskBoard CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/taskboard
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install -e 'Capstone project/backend[test]'
+      - run: python -m pytest -q
+        working-directory: Capstone project/backend
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - run: npm ci && npm run build
+        working-directory: Capstone project/frontend
+
+  images:
+    needs: quality
+    runs-on: ubuntu-latest
+    permissions: {contents: read, packages: write}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        if: github.event_name == 'push'
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker build -t taskboard-backend:${{ github.sha }} 'Capstone project/backend'
+      - run: docker build -t taskboard-frontend:${{ github.sha }} 'Capstone project/frontend'
+      - uses: aquasecurity/trivy-action@master
+        with: {image-ref: taskboard-backend:${{ github.sha }}, severity: HIGH,CRITICAL, ignore-unfixed: true, exit-code: 1}
+      - uses: aquasecurity/trivy-action@master
+        with: {image-ref: taskboard-frontend:${{ github.sha }}, severity: HIGH,CRITICAL, ignore-unfixed: true, exit-code: 1}
+      - if: github.event_name == 'push'
+        run: |
+          docker tag taskboard-backend:${{ github.sha }} ${{ env.IMAGE_PREFIX }}-backend:${{ github.sha }}
+          docker tag taskboard-frontend:${{ github.sha }} ${{ env.IMAGE_PREFIX }}-frontend:${{ github.sha }}
+          docker push ${{ env.IMAGE_PREFIX }}-backend:${{ github.sha }}
+          docker push ${{ env.IMAGE_PREFIX }}-frontend:${{ github.sha }}
+
+  kind-smoke:
+    needs: images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: helm/kind-action@v1.12.0
+      - run: |
+          docker build -t taskboard-backend:${{ github.sha }} 'Capstone project/backend'
+          docker build -t taskboard-frontend:${{ github.sha }} 'Capstone project/frontend'
+          kind load docker-image taskboard-backend:${{ github.sha }} taskboard-frontend:${{ github.sha }}
+          sed -i "s#ghcr.io/example/taskboard-backend:latest#taskboard-backend:${{ github.sha }}#; s#ghcr.io/example/taskboard-frontend:latest#taskboard-frontend:${{ github.sha }}#" 'Capstone project/k8s/backend.yaml' 'Capstone project/k8s/frontend.yaml'
+          kubectl apply -f 'Capstone project/k8s/'
+          kubectl -n taskboard wait --for=condition=available deployment/taskboard-backend --timeout=120s
+          kubectl -n taskboard port-forward service/taskboard-backend 18000:80 >/tmp/taskboard-forward.log 2>&1 &
+          for attempt in {1..30}; do curl -fsS http://localhost:18000/health && exit 0 || sleep 2; done
+          exit 1

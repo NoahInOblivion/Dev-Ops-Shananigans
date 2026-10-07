@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: broken-image, namespace: taskboard}
+spec:
+  selector: {matchLabels: {app: broken-image}}
+  template:
+    metadata: {labels: {app: broken-image}}
+    spec:
+      containers: [{name: app, image: example.invalid/taskboard:missing}]

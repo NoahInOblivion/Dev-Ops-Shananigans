@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskboard-backend
+  labels:
+    {{- include "taskboard.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.backend }}
+  selector: {matchLabels: {app: taskboard-backend}}
+  template:
+    metadata: {labels: {app: taskboard-backend}}
+    spec:
+      securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: backend
+          image: {{ .Values.images.backend }}
+          ports: [{name: http, containerPort: 8000}]
+          envFrom: [{configMapRef: {name: taskboard-config}}]
+          securityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+          readinessProbe: {httpGet: {path: /health, port: http}}
+          livenessProbe: {httpGet: {path: /health, port: http}}
+          resources: {{- toYaml .Values.resources.backend | nindent 12}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskboard-backend
+  labels: {app: taskboard-backend}
+spec:
+  selector: {app: taskboard-backend}
+  ports: [{name: http, port: 80, targetPort: http}]
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: taskboard-backend}
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: taskboard-backend}
+  minReplicas: 2
+  maxReplicas: 6
+  metrics: [{type: Resource, resource: {name: cpu, target: {type: Utilization, averageUtilization: 60}}}]

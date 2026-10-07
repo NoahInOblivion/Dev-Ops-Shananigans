@@ -1,0 +1,10 @@
+.env
+backend/*.db
+backend/.pytest_cache/
+backend/__pycache__/
+frontend/node_modules/
+frontend/dist/
+terraform/.terraform/
+terraform/*.tfstate*
+terraform/terraform.tfvars
+terraform/crash.log

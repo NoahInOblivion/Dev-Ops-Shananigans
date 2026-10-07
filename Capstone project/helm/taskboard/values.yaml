@@ -1,0 +1,14 @@
+images:
+  backend: ghcr.io/example/taskboard-backend:latest
+  frontend: ghcr.io/example/taskboard-frontend:latest
+replicaCount: {backend: 2, frontend: 2}
+ingress: {enabled: true, host: taskboard.local, className: nginx}
+monitoring: {enabled: true}
+database:
+  host: postgres
+  name: taskboard
+  user: taskboard
+  password: change-me
+resources:
+  backend: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: 500m, memory: 512Mi}}
+  frontend: {requests: {cpu: 50m, memory: 64Mi}, limits: {cpu: 200m, memory: 256Mi}}

@@ -19,6 +19,7 @@ The examples are intentionally small. You can read the source, run one command, 
 | Kubernetes core objects | Pods, controllers, rollouts, and troubleshooting | [`Kubernetes Core Objects/README.md`](Kubernetes%20Core%20Objects/README.md) |
 | Kubernetes services | Service types, DNS, and selectors | [`Kubernetes Services/README.md`](Kubernetes%20Services/README.md) |
 | Kubernetes ingress | ConfigMaps, Secrets, Ingress, TLS, and full demo | [`Kubernetes Ingress/README.md`](Kubernetes%20Ingress/README.md) |
+| Capstone project | TaskBoard DevSecOps application, CI/CD, Kubernetes, Helm, Terraform, and observability | [`Capstone project/README.md`](Capstone%20project/README.md) |
 
 ## Prerequisites
 

@@ -1,0 +1,22 @@
+:root { font-family: Inter, system-ui, sans-serif; color: #e8edf2; background: #11161b; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1180px; margin: auto; padding: 48px 24px; }
+header { border-bottom: 1px solid #33404a; padding-bottom: 28px; margin-bottom: 28px; }
+h1 { font-size: clamp(3rem, 8vw, 6rem); letter-spacing: -.08em; margin: 0; color: #f4f7fa; }
+h2 { color: #a8bac8; font-size: .85rem; letter-spacing: .12em; }
+.eyebrow { color: #6ee7b7; font-size: .75rem; letter-spacing: .16em; }
+.new-task label { display: block; margin-bottom: 8px; color: #a8bac8; }
+.new-task div { display: flex; gap: 8px; }
+input, select, button { border: 1px solid #46545e; border-radius: 6px; padding: 11px 13px; font: inherit; }
+input, select { background: #1d252c; color: #f4f7fa; }
+input { flex: 1; }
+button { background: #6ee7b7; color: #10231c; cursor: pointer; font-weight: 700; }
+.board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+.column { min-height: 250px; background: #182027; border: 1px solid #2c3942; border-radius: 8px; padding: 16px; }
+.task { background: #232e36; border-radius: 6px; padding: 14px; margin-top: 12px; }
+.task p { color: #a8bac8; }
+.task select { width: 100%; margin: 14px 0 8px; }
+.delete { background: transparent; color: #fca5a5; border-color: #88494e; padding: 7px 10px; }
+.error { color: #fca5a5; }
+@media (max-width: 760px) { .board { grid-template-columns: 1fr; } .new-task div { flex-direction: column; } }
