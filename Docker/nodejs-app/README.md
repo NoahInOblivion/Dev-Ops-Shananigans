@@ -26,4 +26,4 @@ Expected response contains `Hello World`. Stop the container with `Ctrl+C`; `--r
 - No npm dependency or package manifest is needed.
 - Port `3000` is documented with `EXPOSE` and published with `-p` at run time.
 
-This is a teaching example, not a production HTTP server: it has no routing, graceful shutdown, access logging, or health endpoint.
+![Performed in terminal](image.png)

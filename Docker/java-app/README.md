@@ -23,4 +23,4 @@ The HTML response contains `Hello World`. Stop with `Ctrl+C`; `--rm` removes the
 2. `javac HelloWorld.java` compiles the source during the image build.
 3. The default command runs the resulting `HelloWorld` class.
 
-The example keeps the JDK in the final image to show the compile/run flow in one file. A production image would normally separate the build toolchain from the runtime image.
+![Terminal execution](image.png)

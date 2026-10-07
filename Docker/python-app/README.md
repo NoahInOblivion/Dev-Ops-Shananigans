@@ -24,4 +24,4 @@ The response contains `Hello World`. Stop with `Ctrl+C`; the `--rm` flag removes
 - There are no third-party packages or dependency-install steps.
 - The image documents port `8000`; Docker publishes it to the host with `-p`.
 
-The handler deliberately keeps logging and routing minimal so the container lifecycle is easy to inspect.
+![Performed in terminal](image.png)

@@ -17,6 +17,8 @@ curl -fsS http://localhost:8082/
 
 The HTML source contains `Hello World`; a browser with network access also runs the React render. Stop with `Ctrl+C`; `--rm` removes the container.
 
+![Executed in terminal](image.png)
+
 ## Important limitation
 
 There is no local React package, bundler, lockfile, or build step. The browser must reach `unpkg.com` after the page loads. This folder demonstrates the smallest possible React render, not an offline or production frontend build.

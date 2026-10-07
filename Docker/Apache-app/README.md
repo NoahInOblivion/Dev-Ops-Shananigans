@@ -17,6 +17,8 @@ curl -fsS http://localhost:8081/
 
 Open [http://localhost:8081](http://localhost:8081) in a browser. Stop with `Ctrl+C`; `--rm` removes the container.
 
+![Terminal Execution](image.png)
+
 ## Dockerfile notes
 
 The Dockerfile uses `httpd:alpine` and copies the page to `/usr/local/apache2/htdocs/index.html`, Apache's default document root. No application runtime or package manager is involved.
