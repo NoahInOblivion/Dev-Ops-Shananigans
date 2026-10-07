@@ -55,3 +55,30 @@ git status --short
 ```
 
 The screenshots are evidence from the original exercise, not a replacement for checking the commands against the current repository.
+
+## Screenshots
+
+### Cherry-pick on `main`
+
+![git cherry-pick, part 1](ss/image1.png)
+
+![git cherry-pick with conflict resolved and --continue](ss/image2.png)
+
+The second cherry-pick (`88b456e`) hit a modify/delete conflict on the `mocks` files. I resolved it with `git add .` and `git cherry-pick --continue`, and `git log --oneline` then showed the commit on `main`.
+
+## `git commit -a -m` vs `git commit -m`
+
+| Command | Behaviour |
+|---|---|
+| `git commit -m "msg"` | Commits only what is already staged with `git add`. With nothing staged it reports "nothing added to commit". |
+| `git commit -a -m "msg"` | Stages all modified and deleted **tracked** files, then commits. New (untracked) files are not included. |
+
+TODO: add screenshots of this test. Run it in a throwaway repo:
+
+```bash
+echo a > f.txt && git add f.txt && git commit -m "one"
+echo b >> f.txt
+git commit -m "no stage"        # fails: nothing staged
+git commit -a -m "with -a"      # succeeds
+git log --oneline
+```

@@ -47,6 +47,8 @@ Only remove the path stored in `workdir`. The script accepts raw input for names
 
 ## Captured output
 
+![script.sh example run](image.png)
+
 [`image.png`](image.png) records an example run. [`demo/demo`](demo/demo) contains a captured process listing from an earlier run; it is reference output, not an executable test.
 
 ## What this teaches
