@@ -11,26 +11,36 @@ A symbolic link stores a pathname. It can point to a directory and cross filesys
 ```bash
 echo "hello Linux" > original.txt
 ln -s original.txt soft-link.txt
-cat soft-link.txt
 ls -l original.txt soft-link.txt
-rm soft-link.txt
+cat soft-link.txt
+```
 
 ![Soft link done in terminal](ss/image1.png)
-```
+
+`ls -l` shows `soft-link.txt -> original.txt`, and `cat` reads the original content through the link.
 
 A hard link is another directory entry for the same inode. Removing one name leaves the data available through the other name:
 
 ```bash
-echo "hello Linux" > original.txt
 ln original.txt hard-link.txt
 ls -li original.txt hard-link.txt
 rm original.txt
 cat hard-link.txt
-rm hard-link.txt
+```
 
 ![Hard link done in terminal](ss/image2.png)
-![Soft link failing due to deletion](ss/image3.png)
+
+`ls -li` shows the same inode (`2513289`) for both names. After `rm original.txt`, `cat hard-link.txt` still prints the content.
+
+After the original is deleted, the soft link is broken:
+
+```bash
+cat soft-link.txt
 ```
+
+![Soft link failing due to deletion](ss/image3.png)
+
+`cat` fails with `No such file or directory`, because the symlink only stores a path.
 
 | Type | Points to | Usually crosses filesystems? | Can target a directory? |
 |---|---|---:|---:|
@@ -48,10 +58,20 @@ Both create users, but they serve different workflows:
 | `adduser` | Interactive distribution wrapper | Creating a normal user on Ubuntu/Debian |
 | `useradd` | Low-level account utility | Scripts and precise account setup |
 
+`adduser` and `deluser` are Debian/Ubuntu wrappers and are not installed on every distribution (they are missing on Arch, where this was tested), so `useradd` and `userdel` are used here. On Ubuntu the preferred command is `sudo adduser <name>` (interactive, creates the home directory and prompts for a password).
+
 Create and remove a disposable practice account:
 
-![User added in terminal](ss/image4.png)
+```bash
+sudo useradd linux-user          # add -m to also create the home directory
+id linux-user
+getent passwd linux-user
+sudo userdel -r linux-user       # -r removes the home directory and mail spool
 ```
+
+![User added in terminal](ss/image4.png)
+
+`id` shows the uid/gid (1001) and `getent passwd` shows the `/etc/passwd` entry. Without `-m`, `useradd` does not create `/home/linux-user`, which is why `userdel -r` later warned that the home directory was not found.
 
 Check the target account and home directory before removing anything on a real system.
 
@@ -59,10 +79,19 @@ Check the target account and home directory before removing anything on a real s
 
 `journalctl` reads logs collected by `systemd-journald`. These commands cover the common inspection patterns:
 
-![Checked in terminal](ss/image5.png)
+```bash
+sudo journalctl -b
+sudo journalctl --since today
+sudo journalctl -u NetworkManager -n 20 --no-pager
+sudo journalctl --since "1 hour ago" -n 10 --no-pager
+sudo journalctl -u NetworkManager -f
 ```
 
-The SSH unit may be named differently on another distribution. List service units when needed:
+![journalctl output in terminal](ss/image5.png)
+
+`systemctl list-units --type=service` lists services, `-u <unit> -n 20` shows the last 20 log lines of one service, and `--since` shows recent system-wide entries.
+
+The unit name differs between distributions (for example `ssh` on Ubuntu). List service units when needed:
 
 ```bash
 systemctl list-units --type=service
