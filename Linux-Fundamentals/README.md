@@ -14,6 +14,8 @@ ln -s original.txt soft-link.txt
 cat soft-link.txt
 ls -l original.txt soft-link.txt
 rm soft-link.txt
+
+![Soft link done in terminal](ss/image1.png)
 ```
 
 A hard link is another directory entry for the same inode. Removing one name leaves the data available through the other name:
@@ -25,6 +27,9 @@ ls -li original.txt hard-link.txt
 rm original.txt
 cat hard-link.txt
 rm hard-link.txt
+
+![Hard link done in terminal](ss/image2.png)
+![Soft link failing due to deletion](ss/image3.png)
 ```
 
 | Type | Points to | Usually crosses filesystems? | Can target a directory? |
@@ -45,9 +50,7 @@ Both create users, but they serve different workflows:
 
 Create and remove a disposable practice account:
 
-```bash
-sudo adduser homework-user
-sudo deluser --remove-home homework-user
+![User added in terminal](ss/image4.png)
 ```
 
 Check the target account and home directory before removing anything on a real system.
@@ -56,12 +59,7 @@ Check the target account and home directory before removing anything on a real s
 
 `journalctl` reads logs collected by `systemd-journald`. These commands cover the common inspection patterns:
 
-```bash
-sudo journalctl -b
-sudo journalctl --since today
-sudo journalctl -u ssh
-sudo journalctl -u ssh -n 50
-sudo journalctl -u ssh -f
+![Checked in terminal](ss/image5.png)
 ```
 
 The SSH unit may be named differently on another distribution. List service units when needed:
