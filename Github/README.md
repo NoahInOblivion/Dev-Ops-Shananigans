@@ -73,12 +73,5 @@ The second cherry-pick (`88b456e`) hit a modify/delete conflict on the `mocks` f
 | `git commit -m "msg"` | Commits only what is already staged with `git add`. With nothing staged it reports "nothing added to commit". |
 | `git commit -a -m "msg"` | Stages all modified and deleted **tracked** files, then commits. New (untracked) files are not included. |
 
-TODO: add screenshots of this test. Run it in a throwaway repo:
-
-```bash
-echo a > f.txt && git add f.txt && git commit -m "one"
-echo b >> f.txt
-git commit -m "no stage"        # fails: nothing staged
-git commit -a -m "with -a"      # succeeds
-git log --oneline
+![git commit -m and git commit -a -m difference](ss/image3.png)
 ```
