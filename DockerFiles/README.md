@@ -25,6 +25,9 @@ docker run --rm --name hello-python-files -p 8000:8000 hello-python
 docker build -t hello-java DockerFiles/java-app
 docker run --rm --name hello-java-files -p 8081:8081 hello-java
 ```
+![Docker java](ss/image-4.png)
+![Docker Python](ss/image-5.png)
+![Performed in Terminal](ss/image.png)
 
 Verify a running service with the matching port:
 
@@ -33,6 +36,9 @@ curl -fsS http://localhost:8080/
 curl -fsS http://localhost:8000/
 curl -fsS http://localhost:8081/
 ```
+![Performed in terminal](ss/image-1.png)
+![Docker PS](ss/image-2.png)
+![Chrome Verification](ss/image-3.png)
 
 Run one service at a time if you want to reuse the host ports. Stop a foreground container with `Ctrl+C`; `--rm` removes it.
 
