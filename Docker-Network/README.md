@@ -41,6 +41,7 @@ The backend is attached to both `frontend-net` and `db-net`:
 ```bash
 docker inspect -f '{{json .NetworkSettings.Networks}}' homework-backend
 ```
+![This is the setup image](image.png)
 
 The frontend and database also share `shared-net`. Inspect network membership and test name resolution from the containers:
 
@@ -54,6 +55,9 @@ docker exec homework-frontend ping -c 1 homework-database
 docker exec homework-backend ping -c 1 homework-frontend
 docker exec homework-backend ping -c 1 homework-database
 ```
+![This is the status of the network](image-1.png)
+
+![This is the backend net](image-2.png)
 
 The expected ping result is one packet received for each check. The commands test Docker's embedded DNS and connectivity between attached containers.
 
@@ -74,6 +78,8 @@ docker run -d --name homework-apache --network host httpd:2.4
 curl -fsS http://localhost:80
 ```
 
+![Apache running on host network port 80](image-3.png)
+
 Cleanup:
 
 ```bash
@@ -87,20 +93,23 @@ Host networking reduces isolation and can collide with services already listenin
 The fixture is [`site/index.html`](site/index.html). Start Nginx with the host directory mounted into its document root:
 
 ```bash
-docker run -d --name homework-nginx \
-  -p 8080:80 \
-  --mount type=bind,src="$PWD/site",dst=/usr/share/nginx/html,readonly \
+docker run -d --name bindtest -p 8080:80 \
+  -v "$PWD/site:/usr/share/nginx/html:ro" \
   nginx:alpine
 
-curl -fsS http://localhost:8080
+curl http://localhost:8080
 ```
+
+![Nginx with bind mount serving Hello students](image-5.png)
 
 The response contains `Hello students`. Change the host file while the container is running:
 
 ```bash
-printf 'Hello students - updated\n' > site/index.html
-curl -fsS http://localhost:8080
+echo "Hello students -updated" > site/index.html
+curl http://localhost:8080
 ```
+
+![Bind mount updated live without restarting container](image-6.png)
 
 The second response changes without rebuilding the image or restarting the container. The mount is read-only from the container's point of view, while the host can still update the source file.
 
