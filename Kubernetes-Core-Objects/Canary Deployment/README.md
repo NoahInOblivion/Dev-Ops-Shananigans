@@ -210,9 +210,17 @@ for i in $(seq 1 5); do curl -s http://$(minikube ip):30030 | grep -o "STABLE v1
 
 ---
 
+## Verification Screenshot
+
+![Canary Deployment](ss/canary.png)
+
+Shows `app-stable` (9 replicas with `track=stable,version=v1`) and `app-canary` (1 replica with `track=canary,version=v2`) coexisting behind the same service selector `app=myapp-canary`, providing 90/10 traffic split.
+
+---
+
 ## Cleanup
 ```bash
-kubectl delete -f 03-canary/service.yaml
-kubectl delete -f 03-canary/deployment-canary.yaml
-kubectl delete -f 03-canary/deployment-stable.yaml
+kubectl delete -f service.yaml
+kubectl delete -f deployment-canary.yaml
+kubectl delete -f deployment-stable.yaml
 ```

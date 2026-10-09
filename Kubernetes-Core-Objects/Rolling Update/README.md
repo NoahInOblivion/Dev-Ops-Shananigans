@@ -195,8 +195,16 @@ kubectl get pods -l app=app-rolling --show-labels
 
 ---
 
+## Verification Screenshot
+
+![Rolling Update Deployment](ss/rolling-update.png)
+
+Shows `app-rolling` v1 deployment with 4 replicas, seamless transition to v2 using `kubectl rollout status deployment/app-rolling`, and all 4 pods running on v2 without service disruption.
+
+---
+
 ## Cleanup
 ```bash
-kubectl delete -f 01-rolling-update/service.yaml
-kubectl delete -f 01-rolling-update/deployment-v1.yaml
+kubectl delete -f service.yaml
+kubectl delete -f deployment-v1.yaml
 ```

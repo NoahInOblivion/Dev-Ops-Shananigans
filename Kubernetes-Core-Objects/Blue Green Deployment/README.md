@@ -192,9 +192,17 @@ kubectl delete deployment app-blue
 
 ---
 
+## Verification Screenshot
+
+![Blue-Green Deployment](ss/blue-green.png)
+
+Shows `app-blue` and `app-green` deployments running simultaneously, labels inspection (`slot=blue`, `slot=green`), and the instant switch of `myapp-service` selector to `slot=green`.
+
+---
+
 ## Cleanup
 ```bash
-kubectl delete -f 02-blue-green/service-blue.yaml
-kubectl delete -f 02-blue-green/deployment-blue.yaml
-kubectl delete -f 02-blue-green/deployment-green.yaml
+kubectl delete -f service-green.yaml
+kubectl delete -f deployment-blue.yaml
+kubectl delete -f deployment-green.yaml
 ```

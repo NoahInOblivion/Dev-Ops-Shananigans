@@ -212,8 +212,16 @@ deployment "app-recreate" successfully rolled out
 
 ---
 
+## Verification Screenshot
+
+![Recreate Deployment](ss/recreate.png)
+
+Shows `app-recreate` v1 running with 3 replicas, deployment of v2 with all old pods being terminated before new pods are created, and clean rollout completion.
+
+---
+
 ## Cleanup
 ```bash
-kubectl delete -f 04-recreate/service.yaml
-kubectl delete -f 04-recreate/deployment-v2.yaml
+kubectl delete -f service.yaml
+kubectl delete -f deployment-v2.yaml
 ```
