@@ -338,3 +338,11 @@ kubectl get pod <pod>
 kubectl describe pod <pod>
 kubectl logs <pod>
 ```
+
+---
+
+## Verification Screenshot
+
+![Pod Lifecycle States](ss/pod-lifecycle.png)
+
+Shows pods transitioning across lifecycle phases: `lifecycle-running`, `lifecycle-crashloop` entering `CrashLoopBackOff`, and `lifecycle-image-error` encountering `ImagePullBackOff`.
