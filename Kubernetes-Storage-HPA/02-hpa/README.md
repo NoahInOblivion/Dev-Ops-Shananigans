@@ -48,4 +48,6 @@ Terminate the load generator (`Ctrl+C`). After the cooldown period (default ~5 m
 
 ## Verification Screenshot
 
-<!-- Will be embedded after test run -->
+![Horizontal Pod Autoscaler Verification](image.png)
+
+Shows `php-apache` HPA successfully registered with `metrics-server`, querying targets `0%/50%`, with current replica count `1`, and `kubectl top pods` reporting accurate CPU and memory usage (`1m / 10Mi`).
