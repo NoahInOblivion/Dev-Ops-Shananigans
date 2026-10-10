@@ -217,8 +217,16 @@ minikube service web-service-nodeport --url
 
 ---
 
+## Verification Screenshot
+
+![NodePort Service Verification](image.png)
+
+Shows `web-service-nodeport` allocated on static port `30080/TCP`, and host curl to `http://192.168.49.2:30080` returning the Nginx welcome response.
+
+---
+
 ## 9. Cleanup
 ```bash
-kubectl delete -f 02-nodeport/service.yaml
-kubectl delete -f 02-nodeport/app-deployment.yaml
+kubectl delete -f service.yaml
+kubectl delete -f app-deployment.yaml
 ```

@@ -198,8 +198,16 @@ minikube service web-service-loadbalancer
 
 ---
 
+## Verification Screenshot
+
+![LoadBalancer Service Verification](screenshot-2026-10-09_16-48-38.png)
+
+Shows `web-service-loadbalancer` provisioned, listening on port 80 (mapped to nodePort `31670`), and its external IP lifecycle state.
+
+---
+
 ## 9. Cleanup
 ```bash
-kubectl delete -f 03-loadbalancer/service.yaml
-kubectl delete -f 03-loadbalancer/app-deployment.yaml
+kubectl delete -f service.yaml
+kubectl delete -f app-deployment.yaml
 ```

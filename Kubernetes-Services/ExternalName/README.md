@@ -160,8 +160,16 @@ Expected Output (GitHub API JSON):
 
 ---
 
+## Verification Screenshot
+
+![ExternalName Service DNS Verification](image.png)
+
+Shows `external-database-service` returning CNAME resolution (`canonical name = nencyravaliya.me`) directly inside the cluster via `dns-test-client`.
+
+---
+
 ## 8. Cleanup
 ```bash
-kubectl delete -f 04-externalname/client-pod.yaml
-kubectl delete -f 04-externalname/service.yaml
+kubectl delete -f client-pod.yaml
+kubectl delete -f service.yaml
 ```

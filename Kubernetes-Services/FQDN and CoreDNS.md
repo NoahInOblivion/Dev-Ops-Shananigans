@@ -319,3 +319,11 @@ If `nslookup` returns the IP, your CoreDNS is healthy and working perfectly!
 │ Diagnostic Tool               │ nslookup <fqdn> or dig <fqdn> inside a test pod             │
 └───────────────────────────────┴─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 11. Verification Screenshot
+
+![CoreDNS ConfigMap and FQDN Lookup](CoreDNS%20Tests/image.png)
+
+Shows CoreDNS ConfigMap configuration in `kube-system` and `curl-test-pod` successfully resolving the cluster FQDN `kubernetes.default.svc.cluster.local` to IP `10.96.0.1`.

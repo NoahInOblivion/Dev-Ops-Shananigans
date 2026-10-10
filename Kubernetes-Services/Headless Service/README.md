@@ -246,9 +246,17 @@ Expected Output (Nginx HTML from Pod 0):
 
 ---
 
+## Verification Screenshot
+
+![Headless Service DNS Discovery](image.png)
+
+Shows `web-service-headless` (with `ClusterIP: None`) resolving via `nslookup` to individual StatefulSet pod IPs (`10.244.0.68`, `10.244.0.69`, `10.244.0.70`), verifying direct endpoint discovery.
+
+---
+
 ## 10. Cleanup
 ```bash
-kubectl delete -f 05-headless/client-pod.yaml
-kubectl delete -f 05-headless/app-statefulset.yaml
-kubectl delete -f 05-headless/service.yaml
+kubectl delete -f client-pod.yaml
+kubectl delete -f app-statefulset.yaml
+kubectl delete -f service.yaml
 ```

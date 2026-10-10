@@ -241,9 +241,17 @@ You will see the default NGINX welcome page running directly through your Cluste
 
 ---
 
+## Verification Screenshot
+
+![ClusterIP Service Verification](image.png)
+
+Demonstrates `web-service-clusterip` mapped to pod endpoints on port 8080, and `curl-client` successfully sending requests internally to `http://web-service-clusterip:8080`.
+
+---
+
 ## 9. Cleanup
 ```bash
-kubectl delete -f 01-clusterip/client-pod.yaml
-kubectl delete -f 01-clusterip/service.yaml
-kubectl delete -f 01-clusterip/app-deployment.yaml
+kubectl delete -f client-pod.yaml
+kubectl delete -f service.yaml
+kubectl delete -f app-deployment.yaml
 ```
