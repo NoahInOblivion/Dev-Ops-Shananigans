@@ -40,4 +40,12 @@ Verify (History shows Revision 4 rolled back to Rev 1)
 
 ## 3. Hands-on Verification Screenshots
 
-<!-- Will be embedded after test run -->
+### Helm Install & Upgrade Lifecycle
+![Helm Install and Upgrades](image.png)
+
+Demonstrates initial installation of `demo-release` at Revision 1 with 1 replica, followed by upgrades to Revision 2 (3 replicas) and Revision 3 (5 replicas).
+
+### Helm Rollback & Verification
+![Helm Rollback to Revision 1](image%20copy.png)
+
+Demonstrates executing `helm rollback demo-release 1`, creating Revision 4 (marked with description `Rollback to 1`), and the pods immediately scaling back down to a single replica (`demo-release-my-app-...-mzxxm`).
