@@ -106,3 +106,11 @@ secretpassword
 ```bash
 kubectl delete secret yatri-db-secret
 ```
+
+---
+
+## Verification Screenshot
+
+![Secret Decrypt and Injection Verification](image.png)
+
+Demonstrates sensitive credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`) securely injected into pod environment, and successful base64 decoding of `POSTGRES_PASSWORD` to `secretpassword`.

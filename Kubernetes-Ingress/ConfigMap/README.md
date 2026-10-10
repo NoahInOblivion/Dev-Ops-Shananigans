@@ -101,3 +101,11 @@ INFO
 ```bash
 kubectl delete configmap yatri-app-config
 ```
+
+---
+
+## Verification Screenshot
+
+![ConfigMap Injection Verification](image.png)
+
+Demonstrates ConfigMap values (`ENVIRONMENT=production`, `LOG_LEVEL=INFO`, `APP_PORT=5000`) injected into the running backend pod environment.

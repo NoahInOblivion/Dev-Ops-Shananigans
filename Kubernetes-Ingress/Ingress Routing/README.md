@@ -192,3 +192,11 @@ kubectl delete secret campus-tls-cert
 rm -f tls.key tls.crt
 ```
 
+---
+
+## Verification Screenshot
+
+![Ingress Path-Based Routing Verification](image.png)
+
+Shows `yatri-ingress` routing traffic based on path rules: `/` routes to the frontend Nginx service, and `/api/` routes to the backend service delivering JSON with configuration and database credentials.
+
