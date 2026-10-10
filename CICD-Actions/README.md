@@ -47,4 +47,7 @@ This project demonstrates a production-grade CI/CD pipeline built with GitHub Ac
 
 ## 4. Pipeline Execution & Verification Screenshots
 
-<!-- Will be embedded after test run -->
+### GitHub Actions Pipeline Execution
+![GitHub Actions CI/CD Pipeline Success](image.png)
+
+Demonstrates automated pipeline execution (`Main Workflow #24`) on GitHub Actions with a reusable workflow, running steps (`Set up job`, `Print message`, `Show date`, `Show operating system`, `Complete job`) on an `ubuntu-latest` runner with full success.

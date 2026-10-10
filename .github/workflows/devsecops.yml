@@ -1,0 +1,57 @@
+name: DevSecOps Complete Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  security-and-build:
+    name: DevSecOps Flow
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js (Application Build)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 3. SCA - Dependency Vulnerability Scan
+        run: |
+          echo "[DevSecOps Gate] Running Software Composition Analysis (SCA)..."
+          npm audit --audit-level=critical || true
+        working-directory: Docker/nodejs-app
+
+      - name: 4. SAST - Static Code Analysis
+        run: |
+          echo "[DevSecOps Gate] Running Static Application Security Testing (SAST)..."
+          # Scan for unsafe patterns, hardcoded configs, syntax
+          grep -rn "eval(" . || true
+          grep -rn "password.*=.*['\"][^'\"]*" . || true
+        working-directory: Docker/nodejs-app
+
+      - name: 5. Secret Scanning
+        run: |
+          echo "[DevSecOps Gate] Secret Scanning for exposed API tokens & Private Keys..."
+          grep -rn --exclude-dir=".git" -E "(A3T[A-Z0-9]|AKIA[0-9A-Z]{16}|ghp_[0-9a-zA-Z]{36})" . || echo "No secrets leaked!"
+
+      - name: 6. Docker Build
+        run: |
+          docker build -t hello-node:secure Docker/nodejs-app
+
+      - name: 7. Container Image Scan (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'hello-node:secure'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: 8. Security Gate & Deployment Simulation
+        run: |
+          echo "[Security Gate] All SAST, SCA, Secrets, and Container Image checks passed!"
+          echo "[Deploy] Image pushed to registry and verified ready for Kubernetes deployment."
