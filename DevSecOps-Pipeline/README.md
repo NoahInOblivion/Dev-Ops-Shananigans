@@ -35,4 +35,18 @@ The automated pipeline is defined in [`.github/workflows/devsecops.yml`](../.git
 
 ## 3. Pipeline Execution & Verification Screenshots
 
-<!-- Will be embedded after test run -->
+### End-to-End DevSecOps Stages (SCA, SAST, Secret Scanning)
+![DevSecOps Workflow - SCA, SAST, Secrets](image%20copy.png)
+
+Demonstrates automated execution of:
+- **3. SCA - Dependency Vulnerability Scan** (`npm audit`)
+- **4. SAST - Static Code Analysis** (pattern and code vulnerability detection)
+- **5. Secret Scanning** (detecting leaked credentials/tokens)
+
+### Container Build, Trivy Security Scan & Security Gate
+![DevSecOps Workflow - Trivy Scan and Security Gate](image.png)
+
+Demonstrates:
+- **6. Docker Build** of `hello-node:secure`
+- **7. Container Image Scan** via Aqua Security Trivy (identifying CVE vulnerabilities)
+- **8. Security Gate & Deployment Simulation** verifying pipeline gating criteria prior to production deployment.

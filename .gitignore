@@ -1,2 +1,8 @@
 ./docs
 ./DevOps Assignment Season 2.md
+
+# Terraform artifacts
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
