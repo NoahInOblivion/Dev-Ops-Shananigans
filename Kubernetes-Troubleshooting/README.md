@@ -47,4 +47,6 @@ This guide covers real-world troubleshooting workflows, essential diagnostic com
 
 ### Verification Screenshot
 
-<!-- Will be embedded after test run -->
+![Kubernetes ImagePullBackOff Troubleshooting and Resolution](image.png)
+
+Demonstrates root-cause investigation of `ImagePullBackOff` failure, deploying an in-place container image fix using `kubectl set image deployment/yatri-backend backend=nginx:alpine`, and verifying rollout recovery with all 3 replicas restored to `Running (1/1)` state.
