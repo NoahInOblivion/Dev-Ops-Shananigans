@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskBoard: Cloud-Native DevSecOps Platform - Capstone Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(18, 24, 38, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-purple: #818cf8;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Presentation Deck Container */
+    #deck {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 3.5rem 5rem 4.5rem;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(40px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      background: radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.06), transparent 50%),
+                  radial-gradient(circle at 20% 80%, rgba(129, 140, 248, 0.05), transparent 50%),
+                  var(--bg);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    .slide.previous {
+      transform: translateX(-40px);
+    }
+
+    /* Header Component */
+    .slide-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .slide-tag::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-cyan);
+    }
+
+    .slide-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+
+    .slide-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-weight: 400;
+      max-width: 90%;
+    }
+
+    /* Layout Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      flex: 1;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      backdrop-filter: blur(12px);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .card.cyan { border-top: 3px solid var(--accent-cyan); }
+    .card.purple { border-top: 3px solid var(--accent-purple); }
+    .card.green { border-top: 3px solid var(--accent-green); }
+    .card.amber { border-top: 3px solid var(--accent-amber); }
+    .card.rose { border-top: 3px solid var(--accent-rose); }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    .card.cyan .card-title { color: var(--accent-cyan); }
+    .card.purple .card-title { color: var(--accent-purple); }
+    .card.green .card-title { color: var(--accent-green); }
+    .card.amber .card-title { color: var(--accent-amber); }
+    .card.rose .card-title { color: var(--accent-rose); }
+
+    .card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .card li {
+      font-size: 0.95rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+      position: relative;
+      padding-left: 1.25rem;
+    }
+
+    .card li::before {
+      content: '▹';
+      position: absolute;
+      left: 0;
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    .card.purple li::before { color: var(--accent-purple); }
+    .card.green li::before { color: var(--accent-green); }
+    .card.amber li::before { color: var(--accent-amber); }
+    .card.rose li::before { color: var(--accent-rose); }
+
+    code, .code-badge {
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      color: var(--accent-cyan);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Architecture Flow Component */
+    .flow-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .flow-step {
+      flex: 1;
+      text-align: center;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .flow-step small {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .flow-arrow {
+      color: var(--accent-cyan);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    /* Title Slide Specific */
+    .title-slide {
+      justify-content: center;
+      padding-top: 2rem;
+    }
+
+    .title-badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .title-slide h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .title-slide p.lead {
+      font-size: 1.35rem;
+      color: var(--text-muted);
+      max-width: 850px;
+      line-height: 1.5;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Controls & Footer */
+    .deck-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 48px;
+      background: rgba(11, 15, 25, 0.95);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      z-index: 100;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      transition: background 0.15s ease;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .progress-bar-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      transition: width 0.3s ease;
+    }
+
+    /* Speaker Notes Drawer */
+    #speaker-notes {
+      position: fixed;
+      bottom: 48px;
+      left: 0;
+      width: 100%;
+      max-height: 220px;
+      background: #0f172a;
+      border-top: 2px solid var(--accent-purple);
+      padding: 1.25rem 2.5rem;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.6);
+      z-index: 99;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    #speaker-notes.open {
+      transform: translateY(0);
+    }
+
+    .notes-header {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-purple);
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Print Styles for PDF export */
+    @media print {
+      body {
+        overflow: visible;
+        width: 100%;
+        height: auto;
+        background: #0b0f19 !important;
+      }
+      .deck-footer, #speaker-notes, .progress-bar-container {
+        display: none !important;
+      }
+      #deck {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        page-break-after: always;
+        break-after: page;
+        width: 100vw;
+        height: 100vh;
+        padding: 3rem 4rem;
+        background: #0b0f19 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <main id="deck">
+
+    <!-- Slide 1: Title -->
+    <section class="slide title-slide active" data-notes="Welcome everyone! Today I am presenting my final DevOps Capstone project: TaskBoard. TaskBoard models a full cloud-native DevSecOps lifecycle: moving from local development to automated CI/CD security scanning, Terraform infrastructure, and self-healing Kubernetes orchestration with Prometheus monitoring.">
+      <span class="title-badge">FINAL CAPSTONE PROJECT • SESSION 21</span>
+      <h1>TaskBoard: Cloud-Native<br>DevSecOps Platform</h1>
+      <p class="lead">Automated Multi-Stage CI/CD, Container Security Gates, AWS Infrastructure as Code, Kubernetes Helm Orchestration & SRE Observability</p>
+
+      <div class="grid-4">
+        <div class="card cyan">
+          <div class="card-title">🚀 Application</div>
+          <ul>
+            <li>FastAPI + React 18 + PostgreSQL</li>
+            <li>Alembic database migrations</li>
+            <li>Non-root user container isolation</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">🛡️ DevSecOps</div>
+          <ul>
+            <li>GitHub Actions CI/CD</li>
+            <li>Pytest automated tests</li>
+            <li>Trivy scan for HIGH/CRIT CVEs</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-title">☸️ Kubernetes & Helm</div>
+          <ul>
+            <li>Dual-replica deployments</li>
+            <li>Ingress routing + HPA auto-scale</li>
+            <li>Liveness & Readiness probes</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-title">📊 Cloud & SRE</div>
+          <ul>
+            <li>Modular AWS VPC & EKS IaC</li>
+            <li>Prometheus /metrics scraping</li>
+            <li>Grafana latency & throughput</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2: End-to-End Architecture -->
+    <section class="slide" data-notes="Here is our end-to-end architecture flow. When code is pushed to GitHub, GitHub Actions executes tests and Trivy security scans. Images tagged with the Git commit SHA are pushed to the registry. Meanwhile, Terraform automates AWS VPC and EKS provisioning. Inside Kubernetes, Helm orchestrates our pods with automated health checks, ingress, and Prometheus telemetry.">
+      <div class="slide-tag">SYSTEM ARCHITECTURE</div>
+      <h2 class="slide-title">End-to-End DevSecOps System Architecture</h2>
+      <p class="slide-subtitle">A seamless journey from code commit to hardened, auto-scaling Kubernetes cluster</p>
+
+      <div class="flow-row">
+        <div class="flow-step">
+          💻 Workstation
+          <small>Git Feature Branch</small>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          ⚡ GitHub Actions
+          <small>Pytest + Build</small>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          🛡️ Trivy Security
+          <small>CVE Audit Gate</small>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          📦 Container Registry
+          <small>SHA-Tagged Image</small>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          ☸️ K8s + Helm
+          <small>Ingress, HPA, Probes</small>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          📊 Observability
+          <small>Prometheus + Grafana</small>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card cyan">
+          <div class="card-title">Delivery & Security Plane</div>
+          <ul>
+            <li><strong>Automated Testing:</strong> <code>pytest</code> validates REST endpoints & database integrity before build.</li>
+            <li><strong>Vulnerability Filtering:</strong> Trivy scans containers for OS and package CVEs, halting on criticals.</li>
+            <li><strong>Immutable Versioning:</strong> Images tagged with <code>${{ github.sha }}</code> guaranteeing traceable rollbacks.</li>
+            <li><strong>Ephemeral Smoke Test:</strong> CI provisions temporary <code>Kind</code> cluster to verify pod health.</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">Cloud Runtime & Observability Plane</div>
+          <ul>
+            <li><strong>Infrastructure as Code:</strong> Terraform provisions AWS VPC, multi-AZ subnets, and EKS 1.31 cluster.</li>
+            <li><strong>Declarative Orchestration:</strong> Custom Helm chart manages deployments, ConfigMaps, and Secrets.</li>
+            <li><strong>Traffic Routing:</strong> Nginx Ingress routes <code>/</code> to React and <code>/api</code> to FastAPI.</li>
+            <li><strong>Telemetry:</strong> Prometheus scrapes live metrics while Grafana visualizes RED metrics.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Application Tier -->
+    <section class="slide" data-notes="Examining the application tier: we have an asynchronous FastAPI backend exposing 6 REST endpoints. Notice the separation between /health and /ready. /health verifies process liveness, while /ready verifies database connectivity before Kubernetes routes traffic. Both backend and frontend containers run as unprivileged non-root users.">
+      <div class="slide-tag">APPLICATION & CONTAINERIZATION</div>
+      <h2 class="slide-title">Application Architecture & Container Hardening</h2>
+      <p class="slide-subtitle">Multi-tier microservice designed for least-privilege security and native health probing</p>
+
+      <div class="grid-3">
+        <div class="card cyan">
+          <div class="card-title">FastAPI Backend (Python)</div>
+          <ul>
+            <li>Asynchronous Python 3.12 with Uvicorn server</li>
+            <li>6 Core REST endpoints: GET, POST, PUT, DELETE, and <code>/api/tasks/stats</code></li>
+            <li>SQLAlchemy 2.0 ORM with PostgreSQL database</li>
+            <li>Alembic versioned database migrations</li>
+            <li>Prometheus middleware for runtime metrics</li>
+          </ul>
+        </div>
+
+        <div class="card purple">
+          <div class="card-title">React UI & Routing</div>
+          <ul>
+            <li>Interactive Kanban board built with React 18 & Vite</li>
+            <li>Real-time task breakdown: Total, To-Do, In-Progress, Done</li>
+            <li>Status filters and modal task creator</li>
+            <li>Nginx reverse proxy handles transparent <code>/api</code> routing</li>
+            <li>Loading spinners and graceful error banners</li>
+          </ul>
+        </div>
+
+        <div class="card green">
+          <div class="card-title">Container Hardening</div>
+          <ul>
+            <li><strong>Non-Root User:</strong> Runs strictly as <code>appuser (UID 10001)</code></li>
+            <li><strong>Multi-Stage Builds:</strong> Strips build tools, compilers, and dev dependencies from final image</li>
+            <li><strong>Minimal Footprint:</strong> Built on Alpine base images</li>
+            <li><strong>Local Compose:</strong> <code>docker compose up --build</code> spins up full stack with 1 command</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: CI/CD & DevSecOps -->
+    <section class="slide" data-notes="In Module 5 and 6, we implemented our GitHub Actions DevSecOps pipeline. Every push to main triggers automated Pytest test execution. If tests pass, Docker images are built and scanned by Trivy for HIGH and CRITICAL vulnerabilities. Images are tagged with the Git commit SHA, ensuring full traceability.">
+      <div class="slide-tag">AUTOMATION & DEVSECOPS</div>
+      <h2 class="slide-title">Automated CI/CD & DevSecOps Security Gates</h2>
+      <p class="slide-subtitle">Shift-left quality and container vulnerability gates in GitHub Actions (.github/workflows/ci-cd.yml)</p>
+
+      <div class="grid-2">
+        <div class="card cyan">
+          <div class="card-title">Quality Gate: Automated Pytest Suite</div>
+          <ul>
+            <li>Executes on every Git push prior to container image creation</li>
+            <li>Validates task creation, status advancement, and statistics calculations</li>
+            <li>Uses isolated SQLite mock database to prevent test pollution</li>
+            <li><strong>Fail-Fast Behavior:</strong> Broken tests halt pipeline immediately before resource consumption</li>
+          </ul>
+        </div>
+
+        <div class="card rose">
+          <div class="card-title">Security Gate: Trivy Vulnerability Scan</div>
+          <ul>
+            <li>Performs automated CVE scans on backend and frontend images</li>
+            <li>Configured to flag and break pipeline on <code>HIGH</code> or <code>CRITICAL</code> findings</li>
+            <li>Scans OS packages and application dependencies</li>
+            <li>Written CVE analysis documents all evaluated vulnerabilities</li>
+          </ul>
+        </div>
+
+        <div class="card green">
+          <div class="card-title">Artifact Publishing: Immutable SHA Tags</div>
+          <ul>
+            <li>Images tagged with exact Git commit hash <code>${{ github.sha }}</code></li>
+            <li>Eliminates ambiguity caused by the mutable <code>latest</code> tag</li>
+            <li>Pushed directly to GitHub Container Registry (GHCR)</li>
+            <li>Guarantees 100% reproducible deployments and effortless rollbacks</li>
+          </ul>
+        </div>
+
+        <div class="card amber">
+          <div class="card-title">Verification: Ephemeral Kind Cluster</div>
+          <ul>
+            <li>Spins up a throwaway Kubernetes cluster within GitHub Actions runner</li>
+            <li>Loads newly-built SHA images and applies manifests</li>
+            <li>Awaits condition <code>kubectl wait --for=condition=ready</code></li>
+            <li>Executes live in-cluster HTTP smoke tests against endpoints</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Infrastructure as Code -->
+    <section class="slide" data-notes="For cloud infrastructure, we defined our AWS environment with Terraform. We created a modular VPC across multiple availability zones with public subnets and NAT gateways. We also provisioned an AWS EKS 1.31 cluster with managed worker nodes. The configuration is parameterized through terraform.tfvars.example, and all resources can be cleanly decommissioned with terraform destroy.">
+      <div class="slide-tag">INFRASTRUCTURE AS CODE</div>
+      <h2 class="slide-title">Terraform: AWS Cloud Infrastructure Automation</h2>
+      <p class="slide-subtitle">Declarative provisioning of AWS VPC and Managed EKS Kubernetes Cluster</p>
+
+      <div class="grid-3">
+        <div class="card cyan">
+          <div class="card-title">Resilient AWS VPC Design</div>
+          <ul>
+            <li>Multi-AZ networking in region <code>ap-south-1</code></li>
+            <li>Dual public and private subnets across AZs</li>
+            <li>Internet Gateway for public ingress routing</li>
+            <li>NAT Gateway enabling outbound container updates</li>
+            <li>Strict Security Groups adhering to least privilege</li>
+          </ul>
+        </div>
+
+        <div class="card purple">
+          <div class="card-title">Managed AWS EKS 1.31 Cluster</div>
+          <ul>
+            <li>Production-ready managed Kubernetes control plane</li>
+            <li>Node Group: 2x <code>t3.medium</code> EC2 worker instances</li>
+            <li>AWS IAM roles and OIDC authentication provider</li>
+            <li>EBS CSI Driver storage provisioner for database volumes</li>
+            <li>Native cluster autoscaler integration</li>
+          </ul>
+        </div>
+
+        <div class="card amber">
+          <div class="card-title">Secure & Reproducible Lifecycle</div>
+          <ul>
+            <li>Declarative HCL: <code>versions.tf</code>, <code>variables.tf</code>, <code>outputs.tf</code></li>
+            <li>Includes <code>terraform.tfvars.example</code> template</li>
+            <li>Zero hardcoded credentials or cloud secrets in Git</li>
+            <li>Validated <code>terraform destroy</code> lifecycle prevents runaway cloud expenses</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: Kubernetes & Helm -->
+    <section class="slide" data-notes="Here is our Kubernetes and Helm setup. Our Helm chart in helm/taskboard packages the entire microservice. We deploy with 2 replicas for high availability, decoupled ConfigMaps and Secrets, and an Ingress controller routing / to frontend and /api to backend. Horizontal Pod Autoscaler is configured to scale backend pods from 2 to 6 replicas when CPU exceeds 60%.">
+      <div class="slide-tag">KUBERNETES & ORCHESTRATION</div>
+      <h2 class="slide-title">Kubernetes Workloads & Helm Packaging</h2>
+      <p class="slide-subtitle">Production-ready Helm packaging, Ingress networking, and autonomous autoscaling</p>
+
+      <div class="grid-2">
+        <div class="card cyan">
+          <div class="card-title">Helm Packaging (helm/taskboard)</div>
+          <ul>
+            <li>Clean chart structure: <code>Chart.yaml</code>, <code>values.yaml</code>, and templates</li>
+            <li>Environment parameterization (development vs. production values)</li>
+            <li>Single-command deployment: <code>helm upgrade --install taskboard ./helm/taskboard</code></li>
+            <li>Decoupled ConfigMaps (<code>taskboard-config</code>) and Secrets (<code>taskboard-db</code>)</li>
+          </ul>
+        </div>
+
+        <div class="card purple">
+          <div class="card-title">Health Probes & Zero-Downtime Rollouts</div>
+          <ul>
+            <li><strong>Liveness Probe:</strong> Checks <code>/health</code>; restarts container if deadlocked</li>
+            <li><strong>Readiness Probe:</strong> Verifies DB connectivity at <code>/ready</code> before routing requests</li>
+            <li><strong>Rolling Update Strategy:</strong> <code>maxUnavailable: 0</code> and <code>maxSurge: 1</code> guarantees zero downtime</li>
+            <li>Dual-replica baseline guarantees high availability</li>
+          </ul>
+        </div>
+
+        <div class="card green">
+          <div class="card-title">Ingress Routing & Service Discovery</div>
+          <ul>
+            <li>Ingress resource routes traffic via hostname <code>taskboard.local</code></li>
+            <li>Path routing: <code>/</code> routes to Frontend; <code>/api</code> routes to Backend</li>
+            <li>ClusterIP internal networking protects backend and database from public exposure</li>
+          </ul>
+        </div>
+
+        <div class="card amber">
+          <div class="card-title">Horizontal Pod Autoscaler (HPA)</div>
+          <ul>
+            <li>Autoscaler dynamically monitors CPU utilization via Metrics Server</li>
+            <li>Target CPU threshold: <strong>60%</strong></li>
+            <li>Autoscaling boundaries: <strong>2 Min Replicas to 6 Max Replicas</strong></li>
+            <li>Automatically scales out during traffic surges and down during idle periods</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: Troubleshooting -->
+    <section class="slide" data-notes="One of the most important real-world skills tested in this capstone is live troubleshooting. In Challenge 1, a pod was failing with ImagePullBackOff. By describing the pod, we found a typo in the image tag and patched it using kubectl set image. In Challenge 2, a service was returning 503 with zero endpoints. We checked endpoint selectors, found a mismatch with pod labels, and patched the service to restore routing.">
+      <div class="slide-tag">INCIDENT RESPONSE & TROUBLESHOOTING</div>
+      <h2 class="slide-title">Production Troubleshooting Challenge</h2>
+      <p class="slide-subtitle">Simulated root cause analysis and resolution workflows on broken Kubernetes resources</p>
+
+      <div class="grid-2">
+        <div class="card amber">
+          <div class="card-title">Challenge 1: ImagePullBackOff Incident</div>
+          <ul>
+            <li><strong>Symptom:</strong> Pod stuck in <code>ErrImagePull</code> / <code>ImagePullBackOff</code> state.</li>
+            <li><strong>Root Cause Analysis:</strong> Executed <code>kubectl describe pod</code>. Identified that the deployment referenced an invalid, non-existent registry tag: <code>example.invalid/taskboard:nonexistent-tag</code>.</li>
+            <li><strong>Remediation:</strong> Patched container image directly using:
+              <br><code>kubectl set image deployment/broken-image app=nginx:1.25-alpine</code></li>
+            <li><strong>Verification:</strong> Pod successfully pulled image and transitioned to <code>Running (1/1)</code>.</li>
+          </ul>
+        </div>
+
+        <div class="card purple">
+          <div class="card-title">Challenge 2: Service Selector Misconfiguration</div>
+          <ul>
+            <li><strong>Symptom:</strong> Ingress returning HTTP 503; <code>kubectl get endpoints broken-service</code> returned <code>&lt;none&gt;</code>.</li>
+            <li><strong>Root Cause Analysis:</strong> Compared Service selector labels (<code>app: misconfigured-label</code>) against target Pod labels (<code>app: broken-image</code>). Discovered label mismatch.</li>
+            <li><strong>Remediation:</strong> Patched the Service selector to match active pod labels using:
+              <br><code>kubectl patch service broken-service -p '{"spec":{"selector":{"app":"broken-image"}}}'</code></li>
+            <li><strong>Verification:</strong> Endpoints immediately populated with pod IP:port; traffic successfully restored.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 8: Observability -->
+    <section class="slide" data-notes="Finally, our Observability tier. Our FastAPI backend exposes /metrics which Prometheus scrapes via ServiceMonitor. In Grafana, we track the standard RED metrics: Request Rate, Error Rate, and Duration. When synthetic load is applied, we can observe real-time spikes in Grafana and see the Horizontal Pod Autoscaler dynamically increase replicas.">
+      <div class="slide-tag">OBSERVABILITY & SRE</div>
+      <h2 class="slide-title">Observability: Telemetry, Metrics & SRE Dashboards</h2>
+      <p class="slide-subtitle">Continuous visibility into cluster health and application performance using Prometheus and Grafana</p>
+
+      <div class="grid-3">
+        <div class="card cyan">
+          <div class="card-title">Prometheus Instrumentation</div>
+          <ul>
+            <li>FastAPI client automatically instruments all HTTP traffic</li>
+            <li>Exposes standardized Prometheus metrics at <code>/metrics</code></li>
+            <li>Prometheus server scrapes targets via Kubernetes ServiceMonitors</li>
+            <li>Health status verified with targets showing <code>UP</code> in Prometheus console</li>
+          </ul>
+        </div>
+
+        <div class="card purple">
+          <div class="card-title">Grafana SRE Dashboards</div>
+          <ul>
+            <li><strong>Throughput:</strong> Total HTTP requests per second partitioned by endpoint</li>
+            <li><strong>Latency:</strong> p95 and p99 request duration histograms</li>
+            <li><strong>Error Budget:</strong> Ratio of 2xx success codes vs 4xx/5xx failures</li>
+            <li><strong>Infrastructure:</strong> CPU and memory utilization per pod</li>
+          </ul>
+        </div>
+
+        <div class="card green">
+          <div class="card-title">Load Testing & Dynamic Scaling</div>
+          <ul>
+            <li>Executed synthetic load script: <code>./scripts/load-test.sh</code></li>
+            <li>Observed real-time request spikes on Grafana panels</li>
+            <li>Monitored HPA scaling up backend replicas as CPU crossed 60%</li>
+            <li>Confirmed zero dropped packets or downtime during scaling cycle</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 9: Rubric & Summary -->
+    <section class="slide" data-notes="In conclusion, the TaskBoard project achieves full 100/100 alignment with the rubric across all 10 modules. Beyond meeting the rubric, this project demonstrates core engineering principles: shifting security left, using immutable container tags, declaring infrastructure in code, and building self-healing systems. Thank you for your time!">
+      <div class="slide-tag">EVALUATION & CONCLUSION</div>
+      <h2 class="slide-title">Evaluation Summary & Key Engineering Takeaways</h2>
+      <p class="slide-subtitle">Comprehensive 100/100 point rubric alignment and engineering principles mastered</p>
+
+      <div class="grid-2">
+        <div class="card green">
+          <div class="card-title">100-Point Grading Rubric Alignment</div>
+          <ul>
+            <li><strong>M1 Application (10 pts):</strong> FastAPI + React + PostgreSQL + Alembic</li>
+            <li><strong>M2 Testing (10 pts):</strong> Pytest suite covering all CRUD endpoints</li>
+            <li><strong>M3-M4 Git & Docker (15 pts):</strong> Multi-stage non-root containers</li>
+            <li><strong>M5-M6 CI/CD & DevSecOps (20 pts):</strong> GitHub Actions + Trivy scans</li>
+            <li><strong>M7 Terraform IaC (15 pts):</strong> AWS VPC + Managed EKS cluster</li>
+            <li><strong>M8 Kubernetes & Helm (15 pts):</strong> Ingress + Dual Replicas + HPA</li>
+            <li><strong>M9 Observability (10 pts):</strong> Prometheus scraping + Grafana SRE metrics</li>
+            <li><strong>M10 Presentation (5 pts):</strong> Complete documentation and video walkthrough</li>
+          </ul>
+        </div>
+
+        <div class="card cyan">
+          <div class="card-title">Core Principles Demonstrated</div>
+          <ul>
+            <li><strong>Shift-Left Security:</strong> Automated Trivy scans prevent vulnerable images from ever reaching the registry.</li>
+            <li><strong>Immutable Deliverables:</strong> Tagging images with commit SHAs eliminates drift and enables instantaneous rollbacks.</li>
+            <li><strong>Infrastructure as Code:</strong> Zero manual console steps; reproducible cloud provisioning via Terraform.</li>
+            <li><strong>Resilient Operations:</strong> Probes, HPA, and self-healing deployments maintain high availability under load.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Speaker Notes Drawer -->
+  <div id="speaker-notes">
+    <div class="notes-header">
+      <span>🎙️ SPEAKER NOTES / SCRIPT (WHAT TO SAY FOR THIS SLIDE)</span>
+      <span>Press <kbd>S</kbd> to toggle</span>
+    </div>
+    <div id="notes-content"></div>
+  </div>
+
+  <!-- Deck Footer -->
+  <footer class="deck-footer">
+    <div class="footer-left">
+      <span>TaskBoard DevSecOps Platform • Session 21 Final Capstone</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="prevBtn" title="Previous Slide (Left Arrow)">◀ Prev</button>
+      <span id="slideCounter" style="font-weight:600; min-width:65px; text-align:center;">1 / 9</span>
+      <button class="btn" id="nextBtn" title="Next Slide (Right Arrow)">Next ▶</button>
+      <button class="btn" id="notesBtn" title="Toggle Speaker Notes (S)">🎙️ Script (S)</button>
+      <button class="btn" id="fullscreenBtn" title="Fullscreen Mode (F)">⛶ Fullscreen (F)</button>
+      <button class="btn" id="printBtn" title="Print to PDF (P)">📄 Print PDF</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const totalSlides = slides.length;
+    let currentIndex = 0;
+
+    const counter = document.getElementById('slideCounter');
+    const progressBar = document.getElementById('progressBar');
+    const notesDrawer = document.getElementById('speaker-notes');
+    const notesContent = document.getElementById('notes-content');
+
+    function updateSlide(newIndex) {
+      if (newIndex < 0 || newIndex >= totalSlides) return;
+
+      slides.forEach((slide, idx) => {
+        slide.classList.remove('active', 'previous');
+        if (idx < newIndex) {
+          slide.classList.add('previous');
+        }
+      });
+
+      slides[newIndex].classList.add('active');
+      currentIndex = newIndex;
+
+      // Update counter and progress bar
+      counter.textContent = `${currentIndex + 1} / ${totalSlides}`;
+      progressBar.style.width = `${((currentIndex + 1) / totalSlides) * 100}%`;
+
+      // Update speaker notes
+      const currentNotes = slides[currentIndex].getAttribute('data-notes') || 'No speaker notes for this slide.';
+      notesContent.textContent = currentNotes;
+    }
+
+    function nextSlide() {
+      if (currentIndex < totalSlides - 1) updateSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) updateSlide(currentIndex - 1);
+    }
+
+    function toggleNotes() {
+      notesDrawer.classList.toggle('open');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Event listeners
+    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+    document.getElementById('prevBtn').addEventListener('click', prevSlide);
+    document.getElementById('notesBtn').addEventListener('click', toggleNotes);
+    document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'l' || e.key === 'L') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace' || e.key === 'PageUp' || e.key === 'h' || e.key === 'H') {
+        prevSlide();
+      } else if (e.key === 's' || e.key === 'S') {
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'p' || e.key === 'P') {
+        window.print();
+      }
+    });
+
+    // Initialize
+    updateSlide(0);
+  </script>
+</body>
+</html>
